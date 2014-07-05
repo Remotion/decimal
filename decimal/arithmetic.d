@@ -25,8 +25,8 @@ module decimal.arithmetic;
 import std.bigint;
 import std.string;
 
-import decimal.context: DecimalContext, INVALID_OPERATION;
-import decimal.conv: isDecimal, isFixedDecimal, toBigDecimal;
+import decimal.context; //: DecimalContext, INVALID_OPERATION;
+import decimal.conv; //: isDecimal, isFixedDecimal, toBigDecimal;
 import decimal.bigfloat;
 
 unittest {
@@ -1000,7 +1000,7 @@ const(T) min(T)(const T arg1, const T arg2,
 	if (arg1.isQuiet || arg2.isQuiet) {
 		if (arg1.isQuiet) result = arg2;
 	}
-    // if the signs differ, return the signed operand
+	// if the signs differ, return the signed operand
 	else if (arg1.sign != arg2.sign) {
 		if (!arg1.sign) result = arg2;
 	}
@@ -1419,6 +1419,7 @@ unittest {	// add
 	arg1 = Decimal("12");
 	arg2 = Decimal("7.00");
 	sum = add(arg1, arg2, testContext);
+	writeln(sum.toString);
 	assert("19.00" == sum.toString);
 	arg1 = Decimal("1E+2");
 	arg2 = Decimal("1E+4");
@@ -2022,7 +2023,7 @@ public T quantize(T)(const T arg1, const T arg2,
 }
 
 unittest {	// quantize
-    auto context = testContext;
+	auto context = testContext;
 	Decimal arg1, arg2, actual, expect;
 	string str;
 	arg1 = Decimal("2.17");
@@ -2309,7 +2310,7 @@ public T and(T)(const T arg1, const T arg2,
 /// Performs a logical 'and' of the (string) arguments and returns the result
 T and(T: string)(const T arg1, const T arg2) {
 	string str1, str2;
-	int length, diff;
+	long length, diff;
 	if (arg1.length > arg2.length) {
 		length = arg2.length;
 		diff = arg1.length - arg2.length;
@@ -2348,7 +2349,7 @@ public T or(T)(const T arg1, const T arg2,
 /// Performs a logical 'or' of the (string) arguments and returns the result
 T or(T: string)(const T arg1, const T arg2) {
 	string str1, str2;
-	int length;
+	long length;
 	if (arg1.length > arg2.length) {
 		length = arg1.length;
 		str1 = arg1;
@@ -2385,7 +2386,7 @@ public T xor(T)(const T arg1, const T arg2,
 /// and returns the result.
 T xor(T: string)(const T arg1, const T arg2) {
 	string str1, str2;
-	int length;
+	long length;
 	if (arg1.length > arg2.length) {
 		length = arg1.length;
 		str1 = arg1;

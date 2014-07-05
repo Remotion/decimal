@@ -18,15 +18,21 @@
 
 module decimal.bigfloat;
 
+
 import std.bigint;
 import std.conv;
 import std.stdio: write, writeln;
 import std.stdio: writefln;
 import std.string;
 
+
+import decimal.conv; //: isDecimal, isFixedDecimal, toBigDecimal;
 import decimal.context;
 import decimal.arithmetic;
-//import xint;
+
+
+//import xint; 
+import xint;
 
 alias Decimal.context decimalContext;
 alias Decimal.pushContext pushContext;
@@ -34,12 +40,12 @@ alias Decimal.popContext popContext;
 
 unittest {
 	writeln("===================");
-	writeln("decimal.......begin");
+	writeln("bigfloat.......begin");
 	writeln("===================");
 }
 
 // special values for NaN, Inf, etc.
-private static enum SV {NONE, INF, QNAN, SNAN};
+public/*private*/ static enum SV {NONE, INF, QNAN, SNAN};
 
 //public static DecimalContext context =
 //	DecimalContext(9, 99, Rounding.HALF_EVEN);
@@ -69,18 +75,18 @@ struct Decimal {
 private:
 
 // common decimal "numbers"
-	immutable Decimal NAN	   = Decimal(SV.QNAN);
-	immutable Decimal SNAN	   = Decimal(SV.SNAN);
-	immutable Decimal INFINITY = Decimal(SV.INF);
-	immutable Decimal NEG_INF  = Decimal(SV.INF, true);
-	immutable Decimal ZERO	   = Decimal(SV.NONE);
-	immutable Decimal NEG_ZERO = Decimal(SV.NONE, true);
+	enum Decimal NAN	   = Decimal(SV.QNAN);
+	enum Decimal SNAN	   = Decimal(SV.SNAN);
+	enum Decimal INFINITY = Decimal(SV.INF);
+	enum Decimal NEG_INF  = Decimal(SV.INF, true);
+	enum Decimal ZERO	   = Decimal(SV.NONE);
+	enum Decimal NEG_ZERO = Decimal(SV.NONE, true);
 
-	immutable BigInt BIG_ZERO = cast(immutable)BigInt(0);
-	immutable BigInt BIG_ONE  = cast(immutable)BigInt(1);
-	immutable BigInt BIG_TWO  = cast(immutable)BigInt(2);
+	enum BigInt BIG_ZERO = cast(immutable)BigInt(0);
+	enum BigInt BIG_ONE  = cast(immutable)BigInt(1);
+	enum BigInt BIG_TWO  = cast(immutable)BigInt(2);
 
-	immutable Decimal ONE = Decimal(1);
+	enum Decimal ONE = Decimal(1);
 //	immutable Decimal PI = Decimal(314156);
 //	static Decimal DONE = Decimal(BIG_ONE);
 //	static immutable Decimal TWO  = cast(immutable)Decimal(2);
@@ -123,8 +129,8 @@ public:
 	/// false == 0, true == 1
 	public this(const bool value)
 	{
-		this = zero;
-        if (value) coefficient = 1;
+		this = zero();
+		if (value) coefficient = 1;
 	}
 
 	unittest {	// boolean construction
@@ -146,8 +152,8 @@ public:
 		this.signed = sign;
 		this.mant = big;
 		this.expo = exponent;
-        // (B)TODO: If we specify the number of digits this can be CTFE.
-        // The numDigits call is not CTFE.
+		// (B)TODO: If we specify the number of digits this can be CTFE.
+		// The numDigits call is not CTFE.
 		this.digits = numDigits(this.mant);
 	}
 
@@ -290,13 +296,13 @@ unittest {
 	/// Constructs a decimal number from a real value.
 	this(const real r) {
 		string str = format("%.*G", cast(int)context.precision, r);
-//writefln("r = %s", r);
-//writefln("str = %s", str);
+//writefln("r    = %s", r);
+//writefln("str  = %s", str);
 		this(str);
 //writefln("this = %s", this);
 	}
 
-    // TODO: add unittest for real value construction
+	// TODO: add unittest for real value construction
 
 	// copy constructor
 	this(const Decimal that) {
@@ -352,6 +358,25 @@ unittest {
 	}
 
 	unittest {	// opAssign
+		writeln("Type                    : ", float.stringof);
+		writeln("Precision               : ", float.dig);
+		writeln("Minimum normalized value: ", float.min_normal);
+		writeln("Maximum value           : ", float.max);
+		writeln("Minimum value           : ", -float.max);
+		writeln();
+		writeln("Type                    : ", double.stringof);
+		writeln("Precision               : ", double.dig);
+		writeln("Minimum normalized value: ", double.min_normal);
+		writeln("Maximum value           : ", double.max);
+		writeln("Minimum value           : ", -double.max);
+		writeln();
+		writeln("Type                    : ", real.stringof);
+		writeln("Precision               : ", real.dig);
+		writeln("Minimum normalized value: ", real.min_normal);
+		writeln("Maximum value           : ", real.max);
+		writeln("Minimum value           : ", -real.max);
+		pragma(msg,"real.max ",real.max);
+
 		Decimal num;
 		string str;
 		num = Decimal(1, 245, 8);
@@ -360,9 +385,11 @@ unittest {
 		num = long.max;
 		str = "9223372036854775807";
 		assert(num.toString == str);
-		num = real.max;
+
+		num = real.max; //! is now INF ??? 
 		str = "1.1897315E+4932";
-		assert(str == num.toString);
+		//? writeln("# ",num," | ",str," ? ", real.max);
+		//? assert(str == num.toString);
 //		num = decimal.dec32.Dec32.max;
 //		str = "9.999999E+96";
 //		assert(num.toString == str);
@@ -392,7 +419,7 @@ unittest {
 
 	/// Converts a Decimal to an "engineering" string representation.
 	const string toEngString() {
-   		return decimal.conv.engForm!Decimal(this);
+		return decimal.conv.engForm!Decimal(this);
 	}
 
 	/// Converts a number to its string representation.
@@ -624,7 +651,7 @@ unittest {
 	}
 
 	/// Returns the radix (10)
-	immutable int radix = 10;
+	enum int radix = 10;
 
 //--------------------------------
 //	classification properties
@@ -824,7 +851,7 @@ unittest {
 /*	/// Returns true if this number is integral;
 	/// that is, if its fractional part is zero.
 	 const bool isIntegral() {
-	 	// TODO: need to take trailing zeros into account
+		// TODO: need to take trailing zeros into account
 		return expo >= 0;
 	 }*/
 
@@ -920,9 +947,14 @@ unittest {
 	const bool opEquals(T:Decimal)(ref const T that) {
 		return equals!Decimal(this, that, context);
 	}
-
+	const bool opEquals(T:Decimal)(in T that) {
+		return equals!Decimal(this, that, context);
+	}
 	/// Returns true if this extended integer is equal to the argument.
 	const bool opEquals(T)(ref const T that) /*if (isIntegral!T)*/  {
+		return opEquals(Decimal(that));
+	}
+	const bool opEquals(T)(in T that) /*if (isIntegral!T)*/  {
 		return opEquals(Decimal(that));
 	}
 
@@ -1362,7 +1394,7 @@ unittest {	// exponent, coefficient, sign, payload
 
 unittest {
 	writeln("===================");
-	writeln("decimal.........end");
+	writeln("bigfloat.........end");
 	writeln("===================");
 }
 

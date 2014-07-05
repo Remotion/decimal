@@ -19,7 +19,8 @@ import std.bigint;
 import decimal.arithmetic: compare, copyNegate, equals;
 import decimal.conv;
 import decimal.bigfloat;
-//import xint;
+
+import xint;
 
 unittest {
 	import std.stdio;
@@ -56,13 +57,13 @@ immutable static DecimalContext EXTENDED_CONTEXT =
 /// and CEILING modes are also useful for some operations.
 /// General Decimal Arithmetic Specification, p. 13-14.
 public enum Rounding {
-    HALF_EVEN,
-    HALF_DOWN,
-    HALF_UP,
-    DOWN,
-    UP,
-    FLOOR,
-    CEILING,
+	HALF_EVEN,
+	HALF_DOWN,
+	HALF_UP,
+	DOWN,
+	UP,
+	FLOOR,
+	CEILING,
 }
 
 /// The available flags and trap-enablers.
@@ -301,7 +302,7 @@ public T roundToPrecision(T)(const T num,
 } // end roundToPrecision()
 
 unittest {	// roundToPrecision
-//	import decimal.dec32;
+	import decimal.dec32;
 
 	Decimal before = Decimal(9999);
 	Decimal after = before;
@@ -314,31 +315,31 @@ unittest {	// roundToPrecision
 	assert(after.toString == "1.23E+9");
 	after = before;
 	DecimalContext ctx4 = DecimalContext(4, 99, Rounding.HALF_EVEN);
-	after = roundToPrecision(after, ctx4);;
+	after = roundToPrecision(after, ctx4);
 	assert(after.toString == "1.235E+9");
 	after = before;
 	DecimalContext ctx5 = DecimalContext(5, 99, Rounding.HALF_EVEN);
-	after = roundToPrecision(after, ctx5);;
+	after = roundToPrecision(after, ctx5);
 	assert(after.toString == "1.2346E+9");
 	after = before;
 	DecimalContext ctx6 = DecimalContext(6, 99, Rounding.HALF_EVEN);
-	after = roundToPrecision(after, ctx6);;
+	after = roundToPrecision(after, ctx6);
 	assert(after.toString == "1.23457E+9");
 	after = before;
 	DecimalContext ctx7 = DecimalContext(7, 99, Rounding.HALF_EVEN);
-	after = roundToPrecision(after, ctx7);;
+	after = roundToPrecision(after, ctx7);
 	assert(after.toString == "1.234568E+9");
 	after = before;
 	DecimalContext ctx8 = DecimalContext(8, 99, Rounding.HALF_EVEN);
-	after = roundToPrecision(after, ctx8);;
+	after = roundToPrecision(after, ctx8);
 	assert(after.toString == "1.2345679E+9");
 	before = 1235;
 	after = before;
-	after = roundToPrecision(after, ctx3);;
+	after = roundToPrecision(after, ctx3);
 	assert("[0,124,1]" == after.toAbstract());
 	before = 12359;
 	after = before;
-	after = roundToPrecision(after, ctx3);;
+	after = roundToPrecision(after, ctx3);
 	assert("[0,124,2]" == after.toAbstract());
 	before = 1245;
 	after = before;
@@ -346,7 +347,7 @@ unittest {	// roundToPrecision
 	assert("[0,124,1]" == after.toAbstract());
 	before = 12459;
 	after = before;
-	after = roundToPrecision(after, ctx3);;
+	after = roundToPrecision(after, ctx3);
 	assert(after.toAbstract() == "[0,125,2]");
 	Dec32 a = Dec32(0.1);
 	Dec32 b = Dec32.min * Dec32(8888888);
@@ -403,8 +404,8 @@ private bool overflow(T)(ref T num,
 
 private bool halfRounding(DecimalContext context) {
 	return (context.rounding == Rounding.HALF_EVEN ||
-	 		context.rounding == Rounding.HALF_UP ||
-	 		context.rounding == Rounding.HALF_DOWN);
+			context.rounding == Rounding.HALF_UP ||
+			context.rounding == Rounding.HALF_DOWN);
 }
 
 /// Rounds the number to the context precision.
@@ -986,7 +987,7 @@ public const ulong MAX_DECIMAL_LONG = 10UL^^MAX_LONG_DIGITS - 1;
 
 /// Returns the number of digits in the argument.
 public int numDigits(const BigInt arg) {
-    // special cases
+	// special cases
 	if (arg == 0) return 0;
 	int count = 0;
 	long n = bigToLong(arg, count);
@@ -1000,10 +1001,10 @@ unittest {	// numDigits(BigInt)
 
 /// Returns the number of digits in the argument.
 public int numDigits(const uint128 arg) {
-    // special cases
+	// special cases
 	if (arg == 0) return 0;
-    if (arg < 10) return 1;
-    // otherwise reduce until number fits into a long integer...
+	if (arg < 10) return 1;
+	// otherwise reduce until number fits into a long integer...
 	int count = 0;
 	uint128 num = arg;
 	// TODO: why is this commented out?
@@ -1022,11 +1023,11 @@ writefln("QUINT128 = %s", QUINT128);
 /// Returns the number of digits in the argument,
 /// where the argument is an unsigned long integer.
 public int numDigits(const ulong n) {
-    // special cases:
+	// special cases:
 	if (n == 0) return 0;
 	if (n < 10) return 1;
 	if (n >= TENS[18]) return 19;
-    // use a binary search to count the digits
+	// use a binary search to count the digits
 	int min = 2;
 	int max = 18;
 	while (min <= max) {
@@ -1631,7 +1632,7 @@ class DecimalException: object.Exception {
 /// General Decimal Arithmetic Specification, p. 15.
 class ClampedException: DecimalException {
 	this(string msg, string file = __FILE__,
-	     uint line = cast(uint)__LINE__, Throwable next = null)
+		 uint line = cast(uint)__LINE__, Throwable next = null)
 	{
 		super(msg, file, line, next);
 	}
@@ -1641,7 +1642,7 @@ class ClampedException: DecimalException {
 /// General Decimal Arithmetic Specification, p. 15.
 class DivByZeroException: DecimalException {
 	this(string msg, string file = __FILE__,
-	     uint line = cast(uint)__LINE__, Throwable next = null)
+		 uint line = cast(uint)__LINE__, Throwable next = null)
 	{
 		super(msg, file, line, next);
 	}
@@ -1652,7 +1653,7 @@ class DivByZeroException: DecimalException {
 /// General Decimal Arithmetic Specification, p. 15.
 class InexactException: DecimalException {
 	this(string msg, string file = __FILE__,
-	     uint line = cast(uint)__LINE__, Throwable next = null)
+		 uint line = cast(uint)__LINE__, Throwable next = null)
 	{
 		super(msg, file, line, next);
 	}
@@ -1662,7 +1663,7 @@ class InexactException: DecimalException {
 /// General Decimal Arithmetic Specification, p. 15.
 class InvalidOperationException: DecimalException {
 	this(string msg, string file = __FILE__,
-	     uint line = cast(uint)__LINE__, Throwable next = null)
+		 uint line = cast(uint)__LINE__, Throwable next = null)
 	{
 		super(msg, file, line, next);
 	}
@@ -1672,7 +1673,7 @@ class InvalidOperationException: DecimalException {
 /// General Decimal Arithmetic Specification, p. 15.
 class OverflowException: DecimalException {
 	this(string msg, string file = __FILE__,
-	     uint line = cast(uint)__LINE__, Throwable next = null)
+		 uint line = cast(uint)__LINE__, Throwable next = null)
 	{
 		super(msg, file, line, next);
 	}
@@ -1683,7 +1684,7 @@ class OverflowException: DecimalException {
 /// General Decimal Arithmetic Specification, p. 15.
 class RoundedException: DecimalException {
 	this(string msg, string file = __FILE__,
-	     uint line = cast(uint)__LINE__, Throwable next = null)
+		 uint line = cast(uint)__LINE__, Throwable next = null)
 	{
 		super(msg, file, line, next);
 	}
@@ -1694,7 +1695,7 @@ class RoundedException: DecimalException {
 /// General Decimal Arithmetic Specification, p. 15.
 class SubnormalException: DecimalException {
 	this(string msg, string file = __FILE__,
-	     uint line = cast(uint)__LINE__, Throwable next = null)
+		 uint line = cast(uint)__LINE__, Throwable next = null)
 	{
 		super(msg, file, line, next);
 	}
@@ -1704,7 +1705,7 @@ class SubnormalException: DecimalException {
 /// General Decimal Arithmetic Specification, p. 15.
 class UnderflowException: DecimalException {
 	this(string msg, string file = __FILE__,
-	     uint line = cast(uint)__LINE__, Throwable next = null)
+		 uint line = cast(uint)__LINE__, Throwable next = null)
 	{
 		super(msg, file, line, next);
 	}

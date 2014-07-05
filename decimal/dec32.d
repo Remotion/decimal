@@ -35,88 +35,88 @@ private:
 	// The total number of bits in the decimal number.
 	// This is equal to the number of bits in the underlying integer;
 	// (must be 32, 64, or 128).
-	immutable uint bitLength = 32;
+	enum uint bitLength = 32;
 
 	// the number of bits in the sign bit (1, obviously)
-	immutable uint signBit = 1;
+	enum uint signBit = 1;
 
 	// The number of bits in the unsigned value of the decimal number.
-	immutable uint unsignedBits = 31; // = bitLength - signBit;
+	enum uint unsignedBits = 31; // = bitLength - signBit;
 
 	// The number of bits in the (biased) exponent.
-	immutable uint expoBits = 8;
+	enum uint expoBits = 8;
 
 	// The number of bits in the coefficient when the value is
 	// explicitly represented.
-	immutable uint explicitBits = 23;
+	enum uint explicitBits = 23;
 
 	// The number of bits used to indicate special values and implicit
 	// representation
-	immutable uint testBits = 2;
+	enum uint testBits = 2;
 
 	// The number of bits in the coefficient when the value is implicitly
 	// represented. The three missing bits (the most significant bits)
 	// are always '100'.
-	immutable uint implicitBits = 21; // = explicitBits - testBits;
+	enum uint implicitBits = 21; // = explicitBits - testBits;
 
 	// The number of special bits, including the two test bits.
 	// These bits are used to denote infinities and NaNs.
-	immutable uint specialBits = 4;
+	enum uint specialBits = 4;
 
 	// The number of bits that follow the special bits.
 	// Their number is the number of bits in an special value
 	// when the others (sign and special) are accounted for.
-	immutable uint spclPadBits = 27;
+	enum uint spclPadBits = 27;
 	// = bitLength - specialBits - signBit;
 
 	// The number of infinity bits, including the special bits.
 	// These bits are used to denote infinity.
-	immutable uint infinityBits = 5;
+	enum uint infinityBits = 5;
 
 	// The number of bits that follow the special bits in infinities.
 	// These bits are always set to zero in canonical representations.
 	// Their number is the remaining number of bits in an infinity
 	// when all others (sign and infinity) are accounted for.
-	immutable uint infPadBits = 26;
+	enum uint infPadBits = 26;
 	// = bitLength - infinityBits - signBit;
 
 	// The number of nan bits, including the special bits.
 	// These bits are used to denote NaN.
-	immutable uint nanBits = 6;
+	enum uint nanBits = 6;
 
 	// The number of bits in the payload of a NaN.
-	immutable uint payloadBits = 16;
+	enum uint payloadBits = 16;
 
 	// The number of bits that follow the nan bits in NaNs.
 	// These bits are always set to zero in canonical representations.
 	// Their number is the remaining number of bits in a NaN
 	// when all others (sign, nan and payload) are accounted for.
-	immutable uint nanPadBits = 9;
+	enum uint nanPadBits = 9;
 	// = bitLength - payloadBits - specialBits - signBit;
 
 	// length of the coefficient in decimal digits.
-	immutable int PRECISION = 7;
+	enum int PRECISION = 7;
 	// The maximum coefficient that fits in an explicit number.
-	immutable uint C_MAX_EXPLICIT = 0x7FFFFF; // = 8388607;
+	enum uint C_MAX_EXPLICIT = 0x7FFFFF; // = 8388607;
 	// The maximum coefficient allowed in an implicit number.
-	immutable uint C_MAX_IMPLICIT = 9999999;  // = 0x98967F;
+	enum uint C_MAX_IMPLICIT = 9999999;  // = 0x98967F;
 	// masks for coefficients
-//	immutable uint C_IMPLICIT_MASK = 0x1FFFFF;
-//	immutable uint C_EXPLICIT_MASK = 0x7FFFFF;
+//	enum uint C_IMPLICIT_MASK = 0x1FFFFF;
+//	enum uint C_EXPLICIT_MASK = 0x7FFFFF;
 
 	// The maximum unbiased exponent. The largest binary number that can fit
 	// in the width of the exponent field without setting
 	// either of the first two bits to 1.
-	immutable uint MAX_EXPO = 0xBF; // = 191
+	enum uint MAX_EXPO = 0xBF; // = 191
 	// The exponent bias. The exponent is stored as an unsigned number and
 	// the bias is subtracted from the unsigned value to give the true
 	// (signed) exponent.
-	immutable int BIAS = 101;		// = 0x65
+	enum int BIAS = 101;		// = 0x65
 	// The maximum representable exponent.
-	immutable int E_LIMIT = 191;	// MAX_EXPO - BIAS
+	enum int E_LIMIT = 191;	// MAX_EXPO - BIAS
 	// The min and max adjusted exponents.
-	immutable int E_MAX =  96;		// E_LIMIT + PRECISION - 1
-	immutable int E_MIN = -95;		// = 1 - E_MAX
+	enum int E_MAX =  96;		// E_LIMIT + PRECISION - 1
+	enum int E_MIN = -95;		// = 1 - E_MAX
 
 	/// The context for this type.
 	public static const DecimalContext
@@ -178,11 +178,11 @@ private:
 
 private:
 	// The value of the (6) special bits when the number is a signaling NaN.
-	immutable uint SIG_BITS = 0x3F;
+	enum uint SIG_BITS = 0x3F;
 	// The value of the (6) special bits when the number is a quiet NaN.
-	immutable uint NAN_BITS = 0x3E;
+	enum uint NAN_BITS = 0x3E;
 	// The value of the (5) special bits when the number is infinity.
-	immutable uint INF_BITS = 0x1E;
+	enum uint INF_BITS = 0x1E;
 
 //--------------------------------
 //	special values and constants
@@ -242,50 +242,50 @@ private:
 
 public:
 	// special values
-	immutable Dec32 NAN 	 = Dec32(Bits.POS_NAN);
-	immutable Dec32 NEG_NAN  = Dec32(Bits.NEG_NAN);
-	immutable Dec32 SNAN	 = Dec32(Bits.POS_SIG);
-	immutable Dec32 NEG_SNAN = Dec32(Bits.NEG_SIG);
-	immutable Dec32 INFINITY = Dec32(Bits.POS_INF);
-	immutable Dec32 NEG_INF  = Dec32(Bits.NEG_INF);
-	immutable Dec32 ZERO	 = Dec32(Bits.POS_ZRO);
-	immutable Dec32 NEG_ZERO = Dec32(Bits.NEG_ZRO);
-	immutable Dec32 MAX 	 = Dec32(Bits.POS_MAX);
-	immutable Dec32 NEG_MAX  = Dec32(Bits.NEG_MAX);
+	enum Dec32 NAN 	 = Dec32(Bits.POS_NAN);
+	enum Dec32 NEG_NAN  = Dec32(Bits.NEG_NAN);
+	enum Dec32 SNAN	 = Dec32(Bits.POS_SIG);
+	enum Dec32 NEG_SNAN = Dec32(Bits.NEG_SIG);
+	enum Dec32 INFINITY = Dec32(Bits.POS_INF);
+	enum Dec32 NEG_INF  = Dec32(Bits.NEG_INF);
+	enum Dec32 ZERO	 = Dec32(Bits.POS_ZRO);
+	enum Dec32 NEG_ZERO = Dec32(Bits.NEG_ZRO);
+	enum Dec32 MAX 	 = Dec32(Bits.POS_MAX);
+	enum Dec32 NEG_MAX  = Dec32(Bits.NEG_MAX);
 
 	// small integers
-	immutable Dec32 ONE 	 = Dec32(Bits.POS_ONE);
-	immutable Dec32 NEG_ONE  = Dec32(Bits.NEG_ONE);
-	immutable Dec32 TWO 	 = Dec32(Bits.POS_TWO);
-	immutable Dec32 NEG_TWO  = Dec32(Bits.NEG_TWO);
-	immutable Dec32 FIVE	 = Dec32(Bits.POS_FIV);
-	immutable Dec32 NEG_FIVE = Dec32(Bits.NEG_FIV);
-	immutable Dec32 TEN 	 = Dec32(Bits.POS_TEN);
-	immutable Dec32 NEG_TEN  = Dec32(Bits.NEG_TEN);
+	enum Dec32 ONE 	 = Dec32(Bits.POS_ONE);
+	enum Dec32 NEG_ONE  = Dec32(Bits.NEG_ONE);
+	enum Dec32 TWO 	 = Dec32(Bits.POS_TWO);
+	enum Dec32 NEG_TWO  = Dec32(Bits.NEG_TWO);
+	enum Dec32 FIVE	 = Dec32(Bits.POS_FIV);
+	enum Dec32 NEG_FIVE = Dec32(Bits.NEG_FIV);
+	enum Dec32 TEN 	 = Dec32(Bits.POS_TEN);
+	enum Dec32 NEG_TEN  = Dec32(Bits.NEG_TEN);
 
 	// mathamatical constants
-	immutable Dec32 TAU 	 = Dec32(Bits.TAU);
-	immutable Dec32 PI		 = Dec32(Bits.PI);
-	immutable Dec32 PI_2	 = Dec32(Bits.PI_2);
-	immutable Dec32 PI_SQR	 = Dec32(Bits.PI_SQR);
-	immutable Dec32 SQRT_PI  = Dec32(Bits.SQRT_PI);
-	immutable Dec32 SQRT_2PI = Dec32(Bits.SQRT_2PI);
+	enum Dec32 TAU 	 = Dec32(Bits.TAU);
+	enum Dec32 PI		 = Dec32(Bits.PI);
+	enum Dec32 PI_2	 = Dec32(Bits.PI_2);
+	enum Dec32 PI_SQR	 = Dec32(Bits.PI_SQR);
+	enum Dec32 SQRT_PI  = Dec32(Bits.SQRT_PI);
+	enum Dec32 SQRT_2PI = Dec32(Bits.SQRT_2PI);
 
-	immutable Dec32 E		 = Dec32(Bits.E);
-	immutable Dec32 LOG2_E	 = Dec32(Bits.LOG2_E);
-	immutable Dec32 LOG10_E  = Dec32(Bits.LOG10_E);
-	immutable Dec32 LN2 	 = Dec32(Bits.LN2);
-	immutable Dec32 LOG10_2  = Dec32(Bits.LOG10_2);
-	immutable Dec32 LN10	 = Dec32(Bits.LN10);
-	immutable Dec32 LOG2_10  = Dec32(Bits.LOG2_10);
-	immutable Dec32 SQRT2	 = Dec32(Bits.SQRT2);
-	immutable Dec32 SQRT1_2	 = Dec32(Bits.SQRT1_2);
-	immutable Dec32 PHI 	 = Dec32(Bits.PHI);
-	immutable Dec32 GAMMA	 = Dec32(Bits.GAMMA);
+	enum Dec32 E		 = Dec32(Bits.E);
+	enum Dec32 LOG2_E	 = Dec32(Bits.LOG2_E);
+	enum Dec32 LOG10_E  = Dec32(Bits.LOG10_E);
+	enum Dec32 LN2 	 = Dec32(Bits.LN2);
+	enum Dec32 LOG10_2  = Dec32(Bits.LOG10_2);
+	enum Dec32 LN10	 = Dec32(Bits.LN10);
+	enum Dec32 LOG2_10  = Dec32(Bits.LOG2_10);
+	enum Dec32 SQRT2	 = Dec32(Bits.SQRT2);
+	enum Dec32 SQRT1_2	 = Dec32(Bits.SQRT1_2);
+	enum Dec32 PHI 	 = Dec32(Bits.PHI);
+	enum Dec32 GAMMA	 = Dec32(Bits.GAMMA);
 
 	// boolean constants
-	immutable Dec32 TRUE	 = ONE;
-	immutable Dec32 FALSE	 = ZERO;
+	enum Dec32 TRUE	 = ONE;
+	enum Dec32 FALSE	 = ZERO;
 
 //--------------------------------
 //	constructors
@@ -464,6 +464,7 @@ public:
 	public this(const real r) {
 		// check for special values
 		if (!std.math.isFinite(r)) {
+			this(0); // we need to call another constructor ???
 			this = std.math.isInfinity(r) ? INFINITY : nan;
 			this.sign = cast(bool)std.math.signbit(r);
 			return;
@@ -811,7 +812,7 @@ public:
 	}
 
 	/// Returns the radix (10)
-	immutable int radix = 10;
+	enum int radix = 10;
 
 //--------------------------------
 //	classification properties
@@ -1450,7 +1451,7 @@ public:
 		return this;
 	}
 
- 	ref Dec32 opOpAssign(string op, T) (T that) if (isPromotable!T) {
+	ref Dec32 opOpAssign(string op, T) (T that) if (isPromotable!T) {
 		this = opBinary!op(that);
 		return this;
 	}

@@ -37,7 +37,8 @@ public enum OverflowMode {
 public static const ulong BASE = 1UL << 32;
 
 public struct UXInt(int Z,
-	OverflowMode overflow = OverflowMode.IGNORE) {
+	OverflowMode overflow = OverflowMode.IGNORE) 
+{
 
 unittest {
 	writeln("===================");
@@ -77,7 +78,7 @@ writefln("N = %s", N);
 writefln("N-n = %s", N-n);
 writefln("N-n+1 = %s", N-n+1);
 writefln("N-n-1 = %s", N-n-1);
-        int i = N-n-1;
+		int i = N-n-1;
 writefln("i = %s", i);
 //writeln();
 		return cast(uint)digits[i];
@@ -168,8 +169,8 @@ writefln("N-1 = %s", size-1);
 	/// is the reverse of the public constructor and
 	/// of the get/set digit and word methods.
 	private this(const uint[] array) {
-		uint len = array.length >= N ? N : array.length;
-		for (int i = 0; i < len; i++)
+		ulong len = array.length >= N ? N : array.length;
+		for (ulong i = 0; i < len; i++)
 			digits[i] = array[i];
 	}
 
@@ -178,8 +179,8 @@ writefln("N-1 = %s", size-1);
 	/// The list is ordered left to right:
 	/// Most significant digit first, least significant digit last.
 	public this(const ulong[] list ...) {
-		uint len = list.length >= N/2 ? N/2 : list.length;
-		for (int i = 0; i < len; i++) {
+		ulong len = list.length >= N/2 ? N/2 : list.length;
+		for (ulong i = 0; i < len; i++) {
 			digits[2*i]   = low(list[len-i-1]);
 			digits[2*i+1] = high(list[len-i-1]);
 		}
@@ -225,8 +226,8 @@ writefln("N-1 = %s", size-1);
 // constants
 //--------------------------------
 
-	public const UXInt!Z ZERO = UXInt!Z(0);
-	public const UXInt!Z ONE  = UXInt!Z(1);
+	public enum UXInt!Z ZERO = UXInt!Z(0);
+	public enum UXInt!Z ONE  = UXInt!Z(1);
 
 //--------------------------------
 // copy
@@ -272,7 +273,7 @@ writefln("N-1 = %s", size-1);
 		this(value);
 	}
 
-	private static uint[] parseHex(ref char[] chars) {
+	private static uint[] parseHex(/*ref*/ in char[] chars) {
 		auto value = new uint[N];
 		uint charValue = 0;
 		foreach (char ch; chars) {
@@ -292,7 +293,7 @@ writefln("N-1 = %s", size-1);
 		return value;
 	}
 
-	private static uint[] parseBinary(ref char[] chars) {
+	private static uint[] parseBinary(/*ref*/ in char[] chars) {
 		auto value = new uint[N];
 		uint charValue = 0;
 		foreach (char ch; chars) {
@@ -525,7 +526,7 @@ writefln("N-1 = %s", size-1);
 		static BigInt base = BigInt(BASE);
 		// TODO: this returns abs(big) -- do we want cast(unsigned) big?
 		BigInt value = cast(BigInt) big;
-		int len = value.uintLength;
+		ulong len = value.uintLength;
 		if (len > N) len = N;
 		for (int i = 0; i < len; i++) {
 			digits[i] = cast(uint)(value % base).toLong;
@@ -1220,7 +1221,7 @@ writefln("XInt!(256,false).min = %s", XInt!(256,false).min);*/
 	/// The list must be an array. The list is ordered left to right:
 	/// least significant value first, most significant value last.
 	private this(const uint[] array) {
-		uint len = array.length >= N ? N : array.length;
+		uint len = cast(uint)(array.length >= N ? N : array.length);
 		for (int i = 0; i < len; i++)
 			digits[i] = array[i];
 	}
@@ -1273,8 +1274,8 @@ writefln("XInt!(256,false).min = %s", XInt!(256,false).min);*/
 // constants
 //--------------------------------
 
-	public const XInt!Z ZERO = XInt!Z(0);
-	public const XInt!Z ONE  = XInt!Z(1);
+	public enum XInt!Z ZERO = XInt!Z(0);
+	public enum XInt!Z ONE  = XInt!Z(1);
 
 //--------------------------------
 // classification
@@ -1422,7 +1423,7 @@ unittest {	// get/set long values
 //		if (big < 0) big = - big;
 		BigInt arg = cast(BigInt) big;
 		BigInt base = BigInt(BASE);
-		int len = arg.uintLength;
+		int len = cast(int)arg.uintLength;
 		if (len > N) len = N;
 		for (int i = 0; i < len; i++) {
 			digits[i] = cast(uint)(arg % base).toLong;
@@ -2098,10 +2099,10 @@ unittest {
 //--------------------------------
 
 private uint low(const ulong nn)
-    { return nn & 0xFFFFFFFFUL; }
+	{ return nn & 0xFFFFFFFFUL; }
 
 private uint high(const ulong nn)
-    { return (nn & 0xFFFFFFFF00000000UL) >> 32; }
+	{ return (nn & 0xFFFFFFFF00000000UL) >> 32; }
 
 private ulong pack(uint hi, uint lo) {
 	ulong packed = (cast(ulong) hi) << 32;
@@ -2118,7 +2119,7 @@ private ulong pack(uint hi, uint lo) {
 	/// If all digits are zero, returns length = 0.
 	private int numDigits(const uint[] digits) {
 		int count;
-		for (count = digits.length; count > 0; count--) {
+		for (count = cast(int)digits.length; count > 0; count--) {
 			if (digits[count-1]) break;
 		}
 		return count;
@@ -2245,7 +2246,7 @@ private ulong pack(uint hi, uint lo) {
 		return numDigits(a) == 0;
 	}
 
- 	private bool isOdd(const uint[] a) {
+	private bool isOdd(const uint[] a) {
 		return a[0] & 1;
 	}
 
@@ -2419,7 +2420,7 @@ unittest {
 		if (ny > nx) {
 			writefln("should overflow");
 		}
-  		uint[] diff = new uint[nx + 1];
+		uint[] diff = new uint[nx + 1];
 		uint borrow = 0;
 		uint base = 0;
 		uint i = 0;
@@ -2704,7 +2705,7 @@ writefln("nx = %s", nx);
 		uint[] x, y;
 		uint nx = copyDigits(xin, x);
 		uint ny = copyDigits(yin, y);
-        if (ny == 0) throw new Exception("division by zero");
+		if (ny == 0) throw new Exception("division by zero");
 		// special cases
 		if (nx == 0)  {
 			mod = [0];
@@ -2791,7 +2792,7 @@ writefln("nx = %s", nx);
 		uint ny = copyDigits(yin, y);
 		// special cases
 		if (nx == 0) return [0];
-        if (ny == 0) throw new Exception("division by zero");
+		if (ny == 0) throw new Exception("division by zero");
 		if (ny == 1) return divDigit(x, nx, y[0]);
 		// divide arrays
 		return divmodDigits(x, nx, y, ny, mod);
@@ -2831,7 +2832,7 @@ writefln("nx = %s", nx);
 		uint ny = copyDigits(yin, y);
 		// special cases
 		if (nx == 0) return [0];
-        if (ny == 0) throw new Exception("division by zero");
+		if (ny == 0) throw new Exception("division by zero");
 		if (ny == 1) return [modDigit(x, nx, y[0])];
 		// divide arrays
 		divmodDigits(x, nx, y, ny, mod);
@@ -2930,7 +2931,7 @@ unittest {
 		for (int i = 0; i <n; i++) {
 			rand[i] = randomDigit;
 		}
-	    return rand;
+		return rand;
 	}
 
 	private uint randomDigit() {
@@ -2955,7 +2956,7 @@ unittest {
 //writefln("t == r + s = %s", UXInt!Z(t));
 //writefln("s ?= t - r = %s", UXInt!Z(subDigits(t,r)));
 	}
-   	uint[] x = random(2);
+	uint[] x = random(2);
 	uint[] y = random(2);
 	uint[] z = mulDigits(x,y);
 //writefln("UXInt!Z(x) = %s", UXInt!Z(x));
@@ -3051,7 +3052,7 @@ class IntegerException: object.Exception {
 /// General Decimal Arithmetic Specification, p. 15.
 class InvalidOperationException: IntegerException {
 	this(string msg = "Invalid Integer Operation", string file = __FILE__,
-	     uint line = cast(uint)__LINE__, Throwable next = null)
+		 uint line = cast(uint)__LINE__, Throwable next = null)
 	{
 		super(msg, file, line, next);
 	}
@@ -3061,7 +3062,7 @@ class InvalidOperationException: IntegerException {
 /// General Decimal Arithmetic Specification, p. 15.
 class DivByZeroException: IntegerException {
 	this(string msg = "Integer Division by Zero", string file = __FILE__,
-	     uint line = cast(uint)__LINE__, Throwable next = null)
+		 uint line = cast(uint)__LINE__, Throwable next = null)
 	{
 		super(msg, file, line, next);
 	}

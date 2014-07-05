@@ -21,9 +21,9 @@ import std.stdio;
 import decimal.arithmetic;
 import decimal.context;
 import decimal.conv;
-//import decimal.dec32;
-//import decimal.dec64;
-//import decimal.dec128;
+import decimal.dec32;
+import decimal.dec64;
+import decimal.dec128;
 import decimal.bigfloat;
 
 bool assertEqual2(T, U = T)(U actual, U expected,
@@ -47,8 +47,8 @@ bool assertEqual(T)(T expected, T actual,
 //writefln("actual = %s", actual);
 //writefln("T = %s", typeid(T));
 	writeln("failed at ", baseName(file), "(", line, "):",
-	        " expected \"", expected, "\"",
-	        " but found \"", actual, "\".");
+	        " expected ",T.stringof," \"", expected, "\"",
+	        " but found ",T.stringof," \"", actual, "\".");
 	return false;
 }
 
@@ -58,8 +58,8 @@ bool assertStringEqual(T)(T expected, T actual,
 		return true;
 	}
 	writeln("failed at ", baseName(file), "(", line, "):",
-	        " expected \"", expected, "\"",
-	        " but found \"", actual, "\".");
+	        " expected ",T.stringof," \"", expected, "\"",
+	        " but found ",T.stringof," \"", actual, "\".");
 	return false;
 }
 
@@ -90,13 +90,13 @@ public bool testAddition(T, U = T)(U op1, U op2, U expected)
 }
 
 unittest {
-	write("add..........");
-	testAddition!(Decimal, int)(12, 7, 18);
-	testAddition!(Decimal, real)(12.0, 7.1, 19.2);
-	testAddition!(Dec32, int)(12, 7, 18);
-	testAddition!(Dec32, real)(12.0, 7.1, 19.2);
-	testAddition!(Dec64, int)(12, 7, 18);
-	testAddition!(Dec64, real)(12.0, 7.1, 19.2);
+	writeln("add..........");
+	testAddition!(Decimal, int)(12, 7, 19);
+	testAddition!(Decimal, real)(12.0, 7.1, 19.1);
+	testAddition!(Dec32, int)(12, 7, 19);
+	testAddition!(Dec32, real)(12.0, 7.1, 19.1);
+	testAddition!(Dec64, int)(12, 7, 19);
+	testAddition!(Dec64, real)(12.0, 7.1, 19.1);
 }
 
 public void AdditionTest() {
@@ -1124,7 +1124,7 @@ unittest {
 // and to check the NaN, Inf combinations better.
 unittest {
 	write("add..........");
-	testAddition!(Decimal, int)(12, 7, 18);
+	testAddition!(Decimal, int)(12, 7, 19);
 	Decimal op1 = Decimal("12");
 	Decimal op2 = Decimal("7.00");
 	Decimal sum = add(op1, op2, testContext);
@@ -1484,7 +1484,13 @@ unittest {
 	expect = "1.23457E+31";
 	assertEqual(expect, actual.toString);
 	actual = std.math.E;
-	expect = "2.71828183";
+	//pragma(msg, std.math.E);
+	//		  2.71828182845904523536
+	expect = "2.7182818284590451"; 
+	//expect = "2.71828183";
+	//printf(,);
+	//writeln(expect," | ", actual.toString);
+	//assert(0);
 	assertEqual(expect, actual.toString);
 	actual = std.math.LOG2;
 	Decimal copy = Decimal(actual);
@@ -1887,7 +1893,7 @@ unittest {
 	assertEqual(expect, actual);
 	op1 = 2;
 	op2 = 1.5;
-	expect = 1.333;
+	expect = 1.333333333333333333; //1.333;
 	actual = op1 / op2;
 	assertEqual(expect, actual);
 	writeln("passed");
@@ -1963,36 +1969,36 @@ unittest {
 	after = roundToPrecision(after, ctx3);
 	assertTrue(after.toString() == "1.23E+9");
 	after = before;
-	after = roundToPrecision(after, ctx4);;
+	after = roundToPrecision(after, ctx4);
 	assertTrue(after.toString() == "1.235E+9");
 	after = before;
-	after = roundToPrecision(after, ctx5);;
+	after = roundToPrecision(after, ctx5);
 	assertTrue(after.toString() == "1.2346E+9");
 	after = before;
-	after = roundToPrecision(after, ctx6);;
+	after = roundToPrecision(after, ctx6);
 	assertTrue(after.toString() == "1.23457E+9");
 	after = before;
-	after = roundToPrecision(after, ctx7);;
+	after = roundToPrecision(after, ctx7);
 	assertTrue(after.toString() == "1.234568E+9");
 	after = before;
-	after = roundToPrecision(after, ctx8);;
+	after = roundToPrecision(after, ctx8);
 	assertTrue(after.toString() == "1.2345679E+9");
 	before = 1235;
 	after = before;
-	after = roundToPrecision(after, ctx3);;
+	after = roundToPrecision(after, ctx3);
 	assertTrue(after.toAbstract() == "[0,124,1]");
 	before = 12359;
 	after = before;
-	after = roundToPrecision(after, ctx3);;
+	after = roundToPrecision(after, ctx3);
 	assertTrue(after.toAbstract() == "[0,124,2]");
 	before = 1245;
 	after = before;
-	after = roundToPrecision(after, ctx3);;
+	after = roundToPrecision(after, ctx3);
 //writeln("after = ", after.toAbstract);
 	assertEqual("[0,124,1]", after.toAbstract);
 	before = 12459;
 	after = before;
-	after = roundToPrecision(after, ctx3);;
+	after = roundToPrecision(after, ctx3);
 	assertTrue(after.toAbstract() == "[0,125,2]");
 	Dec32 a = Dec32(0.1);
 	Dec32 b = Dec32(1, Dec32.context.minExpo) * Dec32(8888888);

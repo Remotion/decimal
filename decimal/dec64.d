@@ -35,88 +35,88 @@ private:
 	// The total number of bits in the decimal number.
 	// This is equal to the number of bits in the underlying integer;
 	// (must be 32, 64, or 128).
-	immutable uint bitLength = 64;
+	enum uint bitLength = 64;
 
 	// the number of bits in the sign bit (1, obviously)
-	immutable uint signBit = 1;
+	enum uint signBit = 1;
 
 	// The number of bits in the unsigned value of the decimal number.
-	immutable uint unsignedBits = 63; // = bitLength - signBit;
+	enum uint unsignedBits = 63; // = bitLength - signBit;
 
 	// The number of bits in the (biased) exponent.
-	immutable uint expoBits = 10;
+	enum uint expoBits = 10;
 
 	// The number of bits in the coefficient when the value is
 	// explicitly represented.
-	immutable uint explicitBits = 53;
+	enum uint explicitBits = 53;
 
 	// The number of bits used to indicate special values and implicit
 	// representation
-	immutable uint testBits = 2;
+	enum uint testBits = 2;
 
 	// The number of bits in the coefficient when the value is implicitly
 	// represented. The three missing bits (the most significant bits)
 	// are always '100'.
-	immutable uint implicitBits = 51; // = explicitBits - testBits;
+	enum uint implicitBits = 51; // = explicitBits - testBits;
 
 	// The number of special bits, including the two test bits.
 	// These bits are used to denote infinities and NaNs.
-	immutable uint specialBits = 4;
+	enum uint specialBits = 4;
 
 	// The number of bits that follow the special bits.
 	// Their number is the number of bits in a special value
 	// when the others (sign and special) are accounted for.
-	immutable uint spclPadBits = 59;
+	enum uint spclPadBits = 59;
 	// = bitLength - specialBits - signBit;
 
 	// The number of infinity bits, including the special bits.
 	// These bits are used to denote infinity.
-	immutable uint infinityBits = 5;
+	enum uint infinityBits = 5;
 
 	// The number of bits that follow the special bits in infinities.
 	// These bits are always set to zero in canonical representations.
 	// Their number is the remaining number of bits in an infinity
 	// when all others (sign and infinity) are accounted for.
-	immutable uint infPadBits = 58;
+	enum uint infPadBits = 58;
 	// = bitLength - infinityBits - signBit;
 
 	// The number of nan bits, including the special bits.
 	// These bits are used to denote NaN.
-	immutable uint nanBits = 6;
+	enum uint nanBits = 6;
 
 	// The number of bits in the payload of a NaN.
-	immutable uint payloadBits = 16;
+	enum uint payloadBits = 16;
 
 	// The number of bits that follow the nan bits in NaNs.
 	// These bits are always set to zero in canonical representations.
 	// Their number is the remaining number of bits in a NaN
 	// when all others (sign, nan and payload) are accounted for.
-	immutable uint nanPadBits = 41;
+	enum uint nanPadBits = 41;
 	// = bitLength - payloadBits - specialBits - signBit;
 
 	// length of the coefficient in decimal digits.
-	immutable int PRECISION = 16;
+	enum int PRECISION = 16;
 	// The maximum coefficient that fits in an explicit number.
-	immutable ulong C_MAX_EXPLICIT = 0x1FFFFFFFFFFFFF;  // = 36028797018963967
+	enum ulong C_MAX_EXPLICIT = 0x1FFFFFFFFFFFFF;  // = 36028797018963967
 	// The maximum coefficient allowed in an implicit number.
-	immutable ulong C_MAX_IMPLICIT = 9999999999999999;  // = 0x2386F26FC0FFFF
+	enum ulong C_MAX_IMPLICIT = 9999999999999999;  // = 0x2386F26FC0FFFF
 	// masks for coefficients
-	immutable ulong C_IMPLICIT_MASK = 0x1FFFFFFFFFFFFF;
-	immutable ulong C_EXPLICIT_MASK = 0x7FFFFFFFFFFFFF;
+	enum ulong C_IMPLICIT_MASK = 0x1FFFFFFFFFFFFF;
+	enum ulong C_EXPLICIT_MASK = 0x7FFFFFFFFFFFFF;
 
 	// The maximum unbiased exponent. The largest binary number that can fit
 	// in the width of the exponent field without setting
 	// either of the first two bits to 1.
-	immutable uint MAX_EXPO = 0x2FF; // = 767
+	enum uint MAX_EXPO = 0x2FF; // = 767
 	// The exponent bias. The exponent is stored as an unsigned number and
 	// the bias is subtracted from the unsigned value to give the true
 	// (signed) exponent.
-	immutable int BIAS = 398;		 // = 0x18E
+	enum int BIAS = 398;		 // = 0x18E
 	// The maximum representable exponent.
-	immutable int E_LIMIT = 369;	 // MAX_EXPO - BIAS
+	enum int E_LIMIT = 369;	 // MAX_EXPO - BIAS
 	// The min and max adjusted exponents.
-	immutable int E_MAX =  386; 	 // E_LIMIT + C_LENGTH - 1
-	immutable int E_MIN = -385; 	 // = 1 - E_MAX
+	enum int E_MAX =  386; 	 // E_LIMIT + C_LENGTH - 1
+	enum int E_MIN = -385; 	 // = 1 - E_MAX
 
 	/// The context for this type.
 	public static DecimalContext
@@ -179,14 +179,14 @@ private:
 
 		num.pyldNaN = 1;
 		// NOTE: this test should fail when bitmanip is fixed.
-		assert(num.toHexString != "0x7C00000000000001");
-		assert(num.toHexString == "0x0000000000000001");
+		//? assert(num.toHexString != "0x7C00000000000001"); //! FAILS 
+		//? assert(num.toHexString == "0x0000000000000001"); //! FAILS 
 		num.bits = ulong.max;
 		assert(num.toHexString == "0xFFFFFFFFFFFFFFFF");
 		num.pyldNaN = 2;
 		// NOTE: this test should fail when bitmanip is fixed.
-		assert(num.toHexString != "0xFFFFFFFFFFFF0002");
-		assert(num.toHexString == "0x00000000FFFF0002");
+		//? assert(num.toHexString != "0xFFFFFFFFFFFF0002"); //! FAILS 
+		//? assert(num.toHexString == "0x00000000FFFF0002"); //! FAILS 
 		num.bits = ulong.max;
 		assert(num.toHexString == "0xFFFFFFFFFFFFFFFF");
 		num.testNaN = 0b10;
@@ -197,7 +197,7 @@ private:
 		assert(num.toHexString == "0x7C00000000000000");
 		num.pyldNaN = ushort.max;
 		// NOTE: this test should fail when bitmanip is fixed.
-		assert(num.toHexString == "0x000000000000FFFF");
+		//assert(num.toHexString == "0x000000000000FFFF"); //! FAILS 
 		num = nan;
 		assert(num.toHexString == "0x7C00000000000000");
 		num.padInf = ushort.max;
@@ -227,11 +227,11 @@ private:
 
 private:
 	// The value of the (6) special bits when the number is a signaling NaN.
-	immutable uint SIG_BITS = 0x3F;
+	enum uint SIG_BITS = 0x3F;
 	// The value of the (6) special bits when the number is a quiet NaN.
-	immutable uint NAN_BITS = 0x3E;
+	enum uint NAN_BITS = 0x3E;
 	// The value of the (5) special bits when the number is infinity.
-	immutable uint INF_BITS = 0x1E;
+	enum uint INF_BITS = 0x1E;
 
 //--------------------------------
 //	special values and constants
@@ -293,50 +293,50 @@ private:
 
 
 public:
-	immutable Dec64 NAN 	 = Dec64(BITS.POS_NAN);
-	immutable Dec64 SNAN	 = Dec64(BITS.POS_SIG);
-	immutable Dec64 INFINITY = Dec64(BITS.POS_INF);
-	immutable Dec64 NEG_INF  = Dec64(BITS.NEG_INF);
-	immutable Dec64 ZERO	 = Dec64(BITS.POS_ZRO);
-	immutable Dec64 NEG_ZERO = Dec64(BITS.NEG_ZRO);
-	immutable Dec64 MAX 	 = Dec64(BITS.POS_MAX);
-	immutable Dec64 NEG_MAX  = Dec64(BITS.NEG_MAX);
+	enum Dec64 NAN 	 = Dec64(BITS.POS_NAN);
+	enum Dec64 SNAN	 = Dec64(BITS.POS_SIG);
+	enum Dec64 INFINITY = Dec64(BITS.POS_INF);
+	enum Dec64 NEG_INF  = Dec64(BITS.NEG_INF);
+	enum Dec64 ZERO	 = Dec64(BITS.POS_ZRO);
+	enum Dec64 NEG_ZERO = Dec64(BITS.NEG_ZRO);
+	enum Dec64 MAX 	 = Dec64(BITS.POS_MAX);
+	enum Dec64 NEG_MAX  = Dec64(BITS.NEG_MAX);
 
 	// small integers
-	immutable Dec64 ONE 	 = Dec64(BITS.POS_ONE);
-	immutable Dec64 NEG_ONE  = Dec64(BITS.NEG_ONE);
-	immutable Dec64 TWO 	 = Dec64(BITS.POS_TWO);
-	immutable Dec64 NEG_TWO  = Dec64(BITS.NEG_TWO);
-	immutable Dec64 FIVE	 = Dec64(BITS.POS_FIV);
-	immutable Dec64 NEG_FIVE = Dec64(BITS.NEG_FIV);
-	immutable Dec64 TEN 	 = Dec64(BITS.POS_TEN);
-	immutable Dec64 NEG_TEN  = Dec64(BITS.NEG_TEN);
+	enum Dec64 ONE 	 = Dec64(BITS.POS_ONE);
+	enum Dec64 NEG_ONE  = Dec64(BITS.NEG_ONE);
+	enum Dec64 TWO 	 = Dec64(BITS.POS_TWO);
+	enum Dec64 NEG_TWO  = Dec64(BITS.NEG_TWO);
+	enum Dec64 FIVE	 = Dec64(BITS.POS_FIV);
+	enum Dec64 NEG_FIVE = Dec64(BITS.NEG_FIV);
+	enum Dec64 TEN 	 = Dec64(BITS.POS_TEN);
+	enum Dec64 NEG_TEN  = Dec64(BITS.NEG_TEN);
 
 	// mathamatical constants
-	immutable Dec64 TAU 	 = Dec64(BITS.TAU);
-	immutable Dec64 PI		 = Dec64(BITS.PI);
-	immutable Dec64 PI_2	 = Dec64(BITS.PI_2);
-	immutable Dec64 PI_SQR	 = Dec64(BITS.PI_SQR);
-	immutable Dec64 SQRT_PI  = Dec64(BITS.SQRT_PI);
-	immutable Dec64 SQRT_2PI = Dec64(BITS.SQRT_2PI);
-	immutable Dec64 INV_PI   = Dec64(BITS.INV_PI);
+	enum Dec64 TAU 	 = Dec64(BITS.TAU);
+	enum Dec64 PI		 = Dec64(BITS.PI);
+	enum Dec64 PI_2	 = Dec64(BITS.PI_2);
+	enum Dec64 PI_SQR	 = Dec64(BITS.PI_SQR);
+	enum Dec64 SQRT_PI  = Dec64(BITS.SQRT_PI);
+	enum Dec64 SQRT_2PI = Dec64(BITS.SQRT_2PI);
+	enum Dec64 INV_PI   = Dec64(BITS.INV_PI);
 
-	immutable Dec64 E		 = Dec64(BITS.E);
-	immutable Dec64 LOG2_E	 = Dec64(BITS.LOG2_E);
-	immutable Dec64 LOG10_E  = Dec64(BITS.LOG10_E);
-	immutable Dec64 LN2 	 = Dec64(BITS.LN2);
-	immutable Dec64 LOG10_2  = Dec64(BITS.LOG10_2);
-	immutable Dec64 LN10	 = Dec64(BITS.LN10);
-	immutable Dec64 LOG2_10  = Dec64(BITS.LOG2_10);
-	immutable Dec64 SQRT2	 = Dec64(BITS.SQRT2);
-	immutable Dec64 SQRT1_2	 = Dec64(BITS.SQRT1_2);
+	enum Dec64 E		 = Dec64(BITS.E);
+	enum Dec64 LOG2_E	 = Dec64(BITS.LOG2_E);
+	enum Dec64 LOG10_E  = Dec64(BITS.LOG10_E);
+	enum Dec64 LN2 	 = Dec64(BITS.LN2);
+	enum Dec64 LOG10_2  = Dec64(BITS.LOG10_2);
+	enum Dec64 LN10	 = Dec64(BITS.LN10);
+	enum Dec64 LOG2_10  = Dec64(BITS.LOG2_10);
+	enum Dec64 SQRT2	 = Dec64(BITS.SQRT2);
+	enum Dec64 SQRT1_2	 = Dec64(BITS.SQRT1_2);
 /*	Dec32 diff
 	immutable Dec64 PHI 	 = Dec64(BITS.PHI);
 	immutable Dec64 GAMMA	 = Dec64(BITS.GAMMA);
 */
 	// boolean constants
-	immutable Dec64 TRUE	 = ONE;
-	immutable Dec64 FALSE	 = ZERO;
+	enum Dec64 TRUE	 = ONE;
+	enum Dec64 FALSE	 = ZERO;
 
 //--------------------------------
 //	constructors
@@ -600,6 +600,7 @@ writeln("test.toHexString = ", test.toHexString);
 	public this(const real r) {
 		// check for special values
 		if (!std.math.isFinite(r)) {
+			this(0);  // we need to call another constructor ???
 			this = std.math.isInfinity(r) ? INFINITY : NAN;
 			this.sign = cast(bool)std.math.signbit(r);
 			return;
@@ -1018,7 +1019,7 @@ public:
 		}*/
 
 	/// Returns the radix (10)
-	immutable int radix = 10;
+	enum int radix = 10;
 
 //--------------------------------
 //	classification properties

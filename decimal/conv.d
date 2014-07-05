@@ -19,12 +19,13 @@ import std.ascii: isDigit;
 import std.bigint;
 import std.string;
 import std.format;
-//import xint;
+
+import xint;
 
 import decimal.context;
-/*import decimal.dec32;
+import decimal.dec32;
 import decimal.dec64;
-import decimal.dec128;*/
+import decimal.dec128;
 import decimal.bigfloat;
 
 unittest {
@@ -73,9 +74,9 @@ public template isBigDecimal(T) {
 }
 
 /// Returns true if T is a fixed-precision decimal type.
-//public template isFixedDecimal(T) {
-//	enum bool isFixedDecimal = is(T: Dec32) || is(T: Dec64) || is(T: Dec128);
-//}
+public template isFixedDecimal(T) {
+	enum bool isFixedDecimal = is(T: Dec32) || is(T: Dec64) || is(T: Dec128);
+}
 
 /// Converts a decimal number to an arbitrary-precision decimal type
 public T toDecimal(T, U)(const U num) if (isDecimal!T && isBigDecimal!U) {
@@ -174,7 +175,7 @@ public string sciForm(T)(const T num) if (isDecimal!T) {
 	int  expo = num.exponent;
 	bool signed = num.isSigned;
 
-	int adjx = expo + mant.length - 1;
+	long adjx = expo + mant.length - 1;
 	// if the exponent is small use decimal notation
 	if (expo <= 0 && adjx >= -6) {
 		// if the exponent is not zero, insert a decimal point
@@ -254,7 +255,7 @@ public string engForm(T)(const T num) if (isDecimal!T) {
 	int  expo = num.exponent;
 	bool signed = num.isSigned;
 
-	int adjx = expo + mant.length - 1;
+	long adjx = expo + mant.length - 1;
 	// if exponent is small, don't use exponential notation
 	if (expo <= 0 && adjx >= -6) {
 		// if exponent is not zero, insert a decimal point
@@ -449,7 +450,7 @@ private string exponentForm(T)(const T number, const int precision = 6,
 	char[] mant = to!string(num.coefficient).dup;
 	auto expo = num.exponent;
 	auto sign = num.isSigned;
-	int adjx = expo + mant.length - 1;
+	int adjx = expo + cast(int)mant.length - 1;
 	if (mant.length > 1) {
 		insertInPlace(mant, 1, ".");
 	}
@@ -618,7 +619,7 @@ unittest { // setWidth
 }
 
 private void sink(const(char)[] str) {
-    auto app = std.array.appender!(string)();
+	auto app = std.array.appender!(string)();
 	app.put(str);
 }
 
@@ -627,14 +628,14 @@ private void sink(const(char)[] str) {
 public string toString(T)(const T num, const string formatString = "")
 		if (isDecimal!T) {
 
-    auto a = std.array.appender!(const(char)[])();
+	auto a = std.array.appender!(const(char)[])();
 	void sink(const(char)[] s) {
 		a.put(s);
 	}
 	writeTo!T(num, &sink, formatString);
-    auto f = FormatSpec!char(formatString);
-    f.writeUpToNextSpec(a);
-    string str = formatDecimal!T(num, f.spec, f.precision);
+	auto f = FormatSpec!char(formatString);
+	f.writeUpToNextSpec(a);
+	string str = formatDecimal!T(num, f.spec, f.precision);
 	// add trailing zeros
 	if (f.flHash && str.indexOf('.' < 0)) {
 		str ~= ".0";
@@ -713,11 +714,11 @@ public Decimal toNumber(const string inStr) {
 	if (str == "inf" || str == "infinity") {
 		num = Decimal.infinity(sign);
 		return num;
-	};
+	}
 	// at this point, num must be finite
 	num = Decimal.zero(sign);
 	// check for exponent
-	int pos = indexOf(str, 'e');
+	long pos = indexOf(str, 'e');
 	if (pos > 0) {
 		// if it's just a trailing 'e', return NaN
 		if (pos == str.length - 1) {
@@ -794,14 +795,14 @@ public Decimal toNumber(const string inStr) {
 	}
 	// strip underscores
 	if (indexOf(str, '_') >= 0) {
-  		str = removechars(str.idup, "_").dup;
+		str = removechars(str.idup, "_").dup;
 	}
 	// remove internal decimal point
-	int point = indexOf(str, '.');
+	long point = indexOf(str, '.');
 	if (point >= 0) {
 		// excise the point and adjust the exponent
 		str = str[0..point] ~ str[point + 1..$];
-		int diff = str.length - point;
+		int diff = cast(int)(str.length - point);
 		num.exponent = num.exponent - diff;
 	}
 	// ensure string is not empty
@@ -909,7 +910,7 @@ unittest {
 public string toAbstract(T)(const T num) if (isDecimal!T) {
 	if (num.isFinite) {
 		return format("[%d,%s,%d]", num.sign ? 1 : 0,
-		              to!string(num.coefficient), num.exponent);
+					  to!string(num.coefficient), num.exponent);
 	}
 	if (num.isInfinite) {
 		return format("[%d,%s]", num.sign ? 1 : 0, "inf");
@@ -949,8 +950,8 @@ unittest {	// toAbstract
 public string toExact(T)(const T num) if (isDecimal!T) {
 	if (num.isFinite) {
 		return format("%s%sE%s%02d", num.sign ? "-" : "+",
-		              to!string(num.coefficient),
-		              num.exponent < 0 ? "-" : "+", std.math.abs(num.exponent));
+					  to!string(num.coefficient),
+					  num.exponent < 0 ? "-" : "+", std.math.abs(num.exponent));
 	}
 	if (num.isInfinite) {
 		return format("%s%s", num.sign ? "-" : "+", "Infinity");
