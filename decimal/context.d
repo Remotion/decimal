@@ -946,26 +946,26 @@ private void increment(T)(ref T num, ref uint digits) {
 
 // BigInt has problems with const and immutable; these should be const values.
 // the best I can do is to make them private.
-private BigInt BIG_ZERO = BigInt(0);
-private BigInt BIG_ONE  = BigInt(1);
-private BigInt BIG_FIVE = BigInt(5);
-private BigInt BIG_TEN  = BigInt(10);
-private BigInt BILLION  = BigInt(1_000_000_000);
-private BigInt QUINTILLION = BigInt(1_000_000_000_000_000_000);
+private enum BigInt BIG_ZERO = BigInt(0);
+private enum BigInt BIG_ONE  = BigInt(1);
+private enum BigInt BIG_FIVE = BigInt(5);
+private enum BigInt BIG_TEN  = BigInt(10);
+private enum BigInt BILLION  = BigInt(1_000_000_000);
+private enum BigInt QUINTILLION = BigInt(1_000_000_000_000_000_000);
 
 //private uint128 TEN128 = 10;
 //private uint128 QUINT128 = uint128.TEN^^18; //uint128(1_000_000_000_000_000_000);
 
 /// An array of unsigned long integers with values of
 /// powers of ten from 10^^0 to 10^^18
-public static ulong[19] TENS = [10L^^0,
+public static immutable ulong[19] TENS = [10L^^0,
 		10L^^1,  10L^^2,  10L^^3,  10L^^4,  10L^^5,  10L^^6,
 		10L^^7,  10L^^8,  10L^^9,  10L^^10, 10L^^11, 10L^^12,
 		10L^^13, 10L^^14, 10L^^15, 10L^^16, 10L^^17, 10L^^18];
 
 /// An array of unsigned long integers with values of
 /// powers of five from 5^^0 to 5^^26
-public static ulong[27] FIVES = [5L^^0,
+public static immutable ulong[27] FIVES = [5L^^0,
 		5L^^1,  5L^^2,  5L^^3,  5L^^4,  5L^^5,  5L^^6,
 		5L^^7,  5L^^8,  5L^^9,  5L^^10, 5L^^11, 5L^^12,
 		5L^^13, 5L^^14, 5L^^15, 5L^^16, 5L^^17, 5L^^18,

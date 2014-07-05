@@ -256,15 +256,15 @@ public Decimal SQRT1_2() {
 
 unittest {
 	writeln("mixin...");
-writefln("E     = %s", E);
-writefln("LN2   = %s", LN2());
-writefln("LN10  = %s", LN10);
-writefln("LOG_E = %s", LOG_E);
-writefln("LOG_2 = %s", LOG_2);
-writefln("LG_E  = %s", LG_E);
-writefln("SQRT2 = %s", SQRT2());
-writefln("LG_10 = %s", LG_10);
-writefln("LOG_2 = %s", LOG_2);
+	writefln("E     = %s", E);
+	writefln("LN2   = %s", LN2());
+	writefln("LN10  = %s", LN10);
+	writefln("LOG_E = %s", LOG_E);
+	writefln("LOG_2 = %s", LOG_2);
+	writefln("LG_E  = %s", LG_E);
+	writefln("SQRT2 = %s", SQRT2());
+	writefln("LG_10 = %s", LG_10);
+	writefln("LOG_2 = %s", LOG_2);
 	writeln("test missing");
 }
 
@@ -446,19 +446,19 @@ public Decimal hypot(const Decimal x, const Decimal y)
 	// special values
 	if (x.isNaN) return Decimal.nan;
 	if (x.isInfinite || y.isInfinite) return Decimal.infinity();
-    if (x.isZero) return y.copy;
+	if (x.isZero) return y.copy;
 	if (y.isZero) return x.copy;
 
 	Decimal a = x.copyAbs;
-    Decimal b = y.copyAbs;
+	Decimal b = y.copyAbs;
 	if (a < b) {
 		//swap operands
 		Decimal t = a;
 		a = b;
 		b = t;
 	}
-    b /= a;
-    return a * sqrt(Decimal.one + sqr(b));
+	b /= a;
+	return a * sqrt(Decimal.one + sqr(b));
 }
 
 unittest {
@@ -1008,7 +1008,7 @@ public void sincos(Decimal x, out Decimal sine, out Decimal cosine) {
 		sterm = sx/fact;
 		ssum = ssum + sterm;
 	}
-    sine = ssum;
+	sine = ssum;
 	cosine = csum;
 }
 

@@ -45,7 +45,7 @@ unittest {
 }
 
 // special values for NaN, Inf, etc.
-public/*private*/ static enum SV {NONE, INF, QNAN, SNAN};
+public/*private*/ enum SV {NONE, INF, QNAN, SNAN};
 
 //public static DecimalContext context =
 //	DecimalContext(9, 99, Rounding.HALF_EVEN);
@@ -58,52 +58,56 @@ public/*private*/ static enum SV {NONE, INF, QNAN, SNAN};
 /// http://www.speleotrove.com/decimal.
 /// This specification conforms with IEEE standard 754-2008.
 ///
+//pragma( msg ,"Decimal.sizeof ", Decimal.sizeof); //40 bytes
+
 struct Decimal {
 
 	public static DecimalContext context =
 		DecimalContext(9, 99, Rounding.HALF_EVEN);
-
 	private static ContextStack contextStack;
 
-	private SV sval = SV.QNAN;		// special values: default value is quiet NaN
-	private bool signed = false;	// true if the value is negative, false otherwise.
-	private int expo = 0;			// the exponent of the Decimal value
+
 	private BigInt mant;			// the coefficient of the Decimal value
+	private int expo = 0;			// the exponent of the Decimal value
+
 	package int digits; 			// the number of decimal digits in this number.
 									// (unless the number is a special value)
+	private SV sval = SV.QNAN;		// special values: default value is quiet NaN
+	private bool signed = false;	// true if the value is negative, false otherwise.
+
 
 private:
 
 // common decimal "numbers"
-	enum Decimal NAN	   = Decimal(SV.QNAN);
-	enum Decimal SNAN	   = Decimal(SV.SNAN);
+	enum Decimal NAN	  = Decimal(SV.QNAN);
+	enum Decimal SNAN	  = Decimal(SV.SNAN);
 	enum Decimal INFINITY = Decimal(SV.INF);
 	enum Decimal NEG_INF  = Decimal(SV.INF, true);
-	enum Decimal ZERO	   = Decimal(SV.NONE);
+	enum Decimal ZERO	  = Decimal(SV.NONE);
 	enum Decimal NEG_ZERO = Decimal(SV.NONE, true);
 
-	enum BigInt BIG_ZERO = cast(immutable)BigInt(0);
-	enum BigInt BIG_ONE  = cast(immutable)BigInt(1);
-	enum BigInt BIG_TWO  = cast(immutable)BigInt(2);
+	enum BigInt BIG_ZERO  = BigInt(0);
+	enum BigInt BIG_ONE   = BigInt(1);
+	enum BigInt BIG_TWO   = BigInt(2);
 
-	enum Decimal ONE = Decimal(1);
+	enum Decimal ONE      = Decimal(1);
 //	immutable Decimal PI = Decimal(314156);
 //	static Decimal DONE = Decimal(BIG_ONE);
 //	static immutable Decimal TWO  = cast(immutable)Decimal(2);
 //	static immutable Decimal FIVE = cast(immutable)Decimal(5);
 //	static immutable Decimal TEN  = cast(immutable)Decimal(10);
 
-unittest {	// special value constants
-	Decimal num;
-	num = NAN;
-	assert(num.toString == "NaN");
-	num = SNAN;
-	assert(num.toString == "sNaN");
-	num = NEG_ZERO;
-	assert(num.toString == "-0");
-	num = INFINITY;
-	assert(num.toString == "Infinity");
-}
+	unittest {	// special value constants
+		Decimal num;
+		num = NAN;
+		assert(num.toString == "NaN");
+		num = SNAN;
+		assert(num.toString == "sNaN");
+		num = NEG_ZERO;
+		assert(num.toString == "-0");
+		num = INFINITY;
+		assert(num.toString == "Infinity");
+	}
 
 public:
 
@@ -161,6 +165,8 @@ public:
 		Decimal num;
 		num = Decimal(true, BigInt(7254), 94);
 		assert(num.toString == "-7.254E+97");
+
+		static assert(Decimal(true, BigInt(7254), 94).toString == "-7.254E+97");
 	}
 
 	/// Constructs a Decimal from a BigInt coefficient and an
@@ -199,18 +205,18 @@ public:
 		this.digits = digits;
 	}
 
-unittest {
-	write("w/digits...");
-//	const BigInt mant = BigInt(314159);
-	BigInt mant = BigInt("314159");
-	Decimal d = Decimal(false, mant, -5, 6);
-	writefln("d = %s", d);
-	mant = BigInt("3141590000000000000000000000000000000000000");
-	d = Decimal(false, mant, -42, 43);
-	writefln("d = %s", d);
+	unittest {
+		write("w/digits...");
+	//	const BigInt mant = BigInt(314159);
+		BigInt mant = BigInt("314159");
+		Decimal d = Decimal(false, mant, -5, 6);
+		writefln("d = %s", d);
+		mant = BigInt("3141590000000000000000000000000000000000000");
+		d = Decimal(false, mant, -42, 43);
+		writefln("d = %s", d);
 
-	writeln("test missing");
-}
+		writeln("test missing");
+	}
 	/// Constructs a number from an long coefficient
 	/// and an optional integer exponent.
 	this(const long coefficient, const int exponent) {
@@ -372,10 +378,11 @@ unittest {
 		writeln();
 		writeln("Type                    : ", real.stringof);
 		writeln("Precision               : ", real.dig);
-		writeln("Minimum normalized value: ", real.min_normal);
-		writeln("Maximum value           : ", real.max);
-		writeln("Minimum value           : ", -real.max);
-		pragma(msg,"real.max ",real.max);
+		writefln("Minimum normalized value: %.18g", real.min_normal);
+		writefln("Maximum value           : %.18g", real.max);
+		writefln("Minimum value           : %.18g", -real.max);
+		writeln("max_10_exp              : ", real.max_10_exp);
+		//pragma(msg,"real.max ",real.max);
 
 		Decimal num;
 		string str;

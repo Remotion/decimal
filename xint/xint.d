@@ -22,11 +22,16 @@ unittest {
 	writeln("===================");
 }
 
-alias UXInt!128 uint128;
-alias UXInt!256 uint256;
+alias UXInt!128 uint128; //16 bytes
+alias UXInt!256 uint256; //32 bytes
 
-alias XInt!128 int128;
-alias XInt!256 int256;
+alias XInt!128 int128; //16 bytes
+alias XInt!256 int256; //32 bytes
+
+//pragma( msg ,"uint128.sizeof ", uint128.sizeof); //16 bytes
+//pragma( msg ,"uint256.sizeof ", uint256.sizeof); //32 bytes
+//pragma( msg ,"int128.sizeof ", int128.sizeof); //16 bytes
+//pragma( msg ,"int256.sizeof ", int256.sizeof); //32 bytes
 
 public enum OverflowMode {
 	IGNORE,
@@ -34,24 +39,25 @@ public enum OverflowMode {
 	THROW
 };
 
-public static const ulong BASE = 1UL << 32;
+public enum ulong BASE = 1UL << 32;
+
 
 public struct UXInt(int Z,
 	OverflowMode overflow = OverflowMode.IGNORE) 
 {
 
-unittest {
-	writeln("===================");
-	writeln("unsigned......begin");
-	writeln("===================");
-}
+	unittest {
+		writeln("===================");
+		writeln("unsigned......begin");
+		writeln("===================");
+	}
 
 //--------------------------------
 // structure
 //--------------------------------
 
 	// The number of uint digits in an extended integer
-	private static const uint N = Z/32;
+	private enum uint N = Z/32;
 
 	/// Array of the (uint) digits of an extended integer
 	///	The digits are stored in increasing value:
@@ -100,23 +106,23 @@ writefln("i = %s", i);
 		digits[N-2 - index] = low(value);
 	}
 
-unittest {
-	write("digits...");
-	uint128 num;
-	num = uint128([1u,2u,3u,4u]);
-	uint first = num.getDigit(0);
-	assert(first == 4);
-writefln("Z = %s", Z);
-writefln("N = %s", N);
-writefln("N-1 = %s", size-1);
-	uint last = num.getDigit(3);
-	assert(last == 1);
-	ulong firstword = num.getWord(0);
-	assert(firstword == 0x400000003);
-	ulong lastword = num.getWord(1);
-	assert(lastword == 0x200000001);
-	writeln("test missing");
-}
+	unittest {
+		write("digits...");
+		uint128 num;
+		num = uint128([1u,2u,3u,4u]);
+		uint first = num.getDigit(0);
+		assert(first == 4);
+	writefln("Z = %s", Z);
+	writefln("N = %s", N);
+	writefln("N-1 = %s", size-1);
+		uint last = num.getDigit(3);
+		assert(last == 1);
+		ulong firstword = num.getWord(0);
+		assert(firstword == 0x400000003);
+		ulong lastword = num.getWord(1);
+		assert(lastword == 0x200000001);
+		writeln("test missing");
+	}
 
 //--------------------------------
 // bit manipulation
@@ -1125,7 +1131,7 @@ unittest {
 //--------------------------------
 
 	// The number of uint digits in the extended integer
-	private static const uint N = Z/32;
+	private enum uint N = Z/32;
 
 	// digits are right to left:
 	//	least significant digit is digits[0];
